@@ -32,8 +32,11 @@ const list = [];
 
 app.post("/api/shorturl/new", express.urlencoded(), function (req, res) {
   const url = req.body.url;
-  dns.lookup(url, function(err, data){
-    if(err) res.json({ "error": "invalid URL" });
+  const hostname = url.replace(/(http|https):\/\//, '');
+  dns.lookup(hostname, function(err, data){
+    if(err) {
+      res.json({ "error": "invalid URL" });
+    }
     else
     {
       list.push(url);
@@ -45,7 +48,7 @@ app.post("/api/shorturl/new", express.urlencoded(), function (req, res) {
 
 app.get("/api/shorturl/:id", function(req, res){
   const id = req.params.id;
-  res.redirect(list[id - 1]);
+  res.redirect(301, list[id - 1]);
 });
 
 app.listen(port, function () {
