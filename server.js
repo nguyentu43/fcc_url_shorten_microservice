@@ -32,6 +32,9 @@ const list = [];
 
 app.post("/api/shorturl/new", express.urlencoded(), function (req, res) {
   const url = req.body.url;
+  if(!url) {
+    return res.json({error: 'invalid URL'});
+  }
   const hostname = url.replace(/(http|https):\/\//, '');
   dns.lookup(hostname, function(err, data){
     if(err) {
@@ -40,7 +43,7 @@ app.post("/api/shorturl/new", express.urlencoded(), function (req, res) {
     else
     {
       list.push(url);
-      res.json({"original_url": url, "short_url": list.length });
+      res.json({"original_url": hostname, "short_url": list.length });
     }
   });
   
